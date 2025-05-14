@@ -1,0 +1,33 @@
+<?php
+#!/usr/bin/env php
+
+require_once __DIR__ . '/src/GithubActivity.php';
+
+if ($argc < 2) {
+    echo "Usage: github-activity <username>\n";
+    exit(1);
+}
+
+$username = $argv[1];
+
+try {
+    $activity = new GithubActivity($username);
+    $events = $activity->fetchActivity();
+    $output = $activity->processActivity($events);
+
+    if (empty($output)) {
+        echo "No recent public activity found for user: {$username}\n";
+    } else {
+        echo "Recent public activity for user: {$username}\n";
+        echo "----------------------------------------\n";
+
+        foreach ($output as $line) {
+            echo "- {$line}\n";
+        }
+        echo "----------------------------------------";
+    }
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+    exit(1);
+}
+?>
